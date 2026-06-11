@@ -40,14 +40,18 @@ The Python pipeline is executed sequentially to transform raw medical metrics in
 
 ## 🧩 Confusion Matrix Analysis
 
-A Confusion Matrix provides a detailed look at where the model made correct predictions and where it faltered by mapping predicted categories directly against true clinical diagnoses from the testing split.
+A Confusion Matrix provides a detailed look at where the model made correct predictions and where it faltered by mapping predicted categories directly against true clinical diagnoses.
+
+Based on the testing split evaluation (**205 samples**), the model achieved an overall **Model Accuracy of 80.98%** (rounded to 0.81 in the report) with the following distribution:
+
+---
 
 ### 📈 Visual Breakdown of the Matrix
 
-* **True Negatives (TN):** Located in the top-left quadrant (`Actual 0 / Predicted 0`). These represent healthy patients who were correctly classified by the model as having **No Heart Disease**.
-* **True Positives (TP):** Located in the bottom-right quadrant (`Actual 1 / Predicted 1`). These represent high-risk patients who were accurately diagnosed with **Heart Disease Present**.
-* **False Positives (FP):** Located in the top-right quadrant (`Actual 0 / Predicted 1`). These represent false alarms where healthy individuals were incorrectly labeled as positive cases.
-* **False Negatives (FN):** Located in the bottom-left quadrant (`Actual 1 / Predicted 0`). These represent missed diagnoses where patients with heart disease were incorrectly flagged as healthy.
+* **True Negatives (TN) = 70:** The model predicted **No Disease (0)** for 70 samples, and they were truly healthy.
+* **True Positives (TP) = 96:** The model predicted **Disease (1)** for 96 samples, and they were truly diagnosed with a cardiac condition.
+* **False Positives (FP) = 30:** The model made 30 false alarms, mistakenly flagging healthy individuals as having heart disease.
+* **False Negatives (FN) = 9:** The model missed 9 actual heart disease cases, mistakenly predicting them as healthy.
 
 ---
 
@@ -55,34 +59,22 @@ A Confusion Matrix provides a detailed look at where the model made correct pred
 
 In medical machine learning, analyzing the quadrants of a confusion matrix is far more vital than checking a single macro accuracy score:
 
-1. **The Cost of False Negatives (Type II Error):** Missed diagnoses represent the absolute highest risk profile in automated medical diagnostics. A false negative means an individual with an active cardiac condition leaves with an incorrect "clean bill of health." Minimizing this quadrant via threshold tuning or recall optimization remains the primary focus of diagnostic pipeline revisions.
-2. **The Implications of False Positives (Type I Error):** False alarms cause avoidable psychological distress for patients and trigger unnecessary, expensive secondary screening procedures. Keeping the False Positive rate low ensures that when the system raises a cardiac alert, clinical practitioners can trust its predictive specificity.
+1. **The Cost of False Negatives (Type II Error):** The 9 missed cases represent the most critical risk in medical diagnostics. A false negative means an individual with an active cardiac condition leaves with an incorrect "clean bill of health." Lowering this number to zero is the primary goal of future parameter tuning to maximize patient safety.
+2. **The Implications of False Positives (Type I Error):** The 30 false alarms represent individuals who do not have heart disease but were flagged by the model. While medically safer than a false negative, false positives cause preventable patient anxiety and require secondary confirmation procedures, tying up clinical resources.
 
 ---
 
-## 🔬 Final Model Performance Analysis
+### 🟢 Class-by-Class Metric Breakdown
 
-The classification model achieved highly balanced diagnostic performance on the test dataset, demonstrating robust predictive capability on completely unseen clinical profiles.
+#### 🔹 Class 0: No Heart Disease (100 Samples)
+* **Precision (0.89):** Out of all cases the model predicted as healthy, 89% of them were truly free of heart disease. This indicates high reliability when the model delivers a clean report.
+* **Recall (0.70):** The model successfully caught 70% of the actual healthy individuals in the test set, while misclassifying 30% of them as positive risks.
+* **F1-Score (0.78):** Indicates a solid baseline performance for capturing healthy patient profiles.
 
-### 📑 Class-by-Class Metric Breakdown
-
-#### 🟢 Class 0: No Heart Disease
-* **Precision:** Measures the model's accuracy when predicting the absence of disease. A high precision score indicates that the negative assignments are highly reliable and rarely include true heart disease patients.
-* **Recall (Sensitivity):** Reflects the model's capacity to find all truly healthy individuals within the dataset without accidentally misclassifying them as positive risks.
-* **F1-Score:** The harmonic mean of precision and recall for the negative class, proving stable diagnostic baseline consistency.
-
-#### 🔴 Class 1: Heart Disease Present
-* **Precision:** The Positive Predictive Value. This indicates the probability that a patient flagged by the system as having heart disease actually has the condition confirmed by clinical metrics.
-* **Recall (Sensitivity):** Tracks the percentage of actual cardiac patients that the model successfully caught. High recall here proves the algorithm's strength in identifying active medical risks.
-* **F1-Score:** Confirms the overall diagnostic equilibrium and robustness of the model when handling positive cardiac anomalies.
-
----
-
-### 🧮 Global Averages & Pipeline Integrity
-
-* **Macro Average:** Computes the unweighted mean of performance metrics across both classes. Its high value confirms that the model maintains deep, independent predictive strength for both categories rather than being artificially inflated by a single majority class bias.
-* **Weighted Average:** Factors in class volumes (`Support`) across the dataset. Because the Macro and Weighted metrics track closely together, it proves that our stratified train-test split kept the data perfectly balanced, preventing majority groups from skewing the final decision boundaries.
-
+#### 🔸 Class 1: Heart Disease Present (105 Samples)
+* **Precision (0.76):** When the model flags a patient as having heart disease, it is correct 76% of the time.
+* **Recall (0.91):** **High Sensitivity.** Out of 105 patients who actually had heart disease, the model successfully identified 91% of them (96 patients), missing only 9%. In medical analytics, a high recall for the positive disease class is crucial.
+* **F1-Score (0.83):** Confirms a strong diagnostic capability for capturing positive cardiac anomalies.
 ---
 
 ## 💻 Tech Stack Used
